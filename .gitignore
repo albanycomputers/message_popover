@@ -1,0 +1,16 @@
+# Ignore temporary files and backups
+*.swp
+*.bak
+*~
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE settings (VS Code, PHPStorm, etc.)
+.idea/
+.vscode/
+
+# Ignore local PHP error logs
+error_log
+php_errors.log

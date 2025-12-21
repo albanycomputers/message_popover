@@ -1,0 +1,7 @@
+name = Message Popover
+description = "Upgrades system messages to use the native HTML Popover API. Features: Draggable header, resizable window, and configuration for debug mode, persistence, and auto-dismiss timeouts."
+backdrop = 1.x
+type = module
+package = User Interface
+php = 8.0
+configure = admin/config/user-interface/message-popover

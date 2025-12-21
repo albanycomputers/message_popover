@@ -1,0 +1,13 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the message_popover module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function message_popover_uninstall() {
+  // Purge the configuration file from the active config directory.
+  config('message_popover.settings')->delete();
+}

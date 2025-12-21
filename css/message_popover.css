@@ -1,0 +1,170 @@
+/**
+ * message_popover.css
+ * Standardized for Backdrop CMS 1.x / 2.x.
+ */
+
+/* Main Container */
+.message-popover-item:popover-open {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset-block-start: 3.5rem;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0;
+  padding-block-start: 14px; /* Header Strip Height */
+  border: 1px solid darkgrey;
+  border-radius: 4px;
+  width: fit-content;
+  min-width: 320px;
+  max-width: 90vw;
+  resize: both;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 2147483647;
+  background-color: #fff;
+  /* Explicitly set default cursor for the window body */
+  cursor: default;
+}
+
+/* Maintain horizontal centering during the initial processed state */
+.message-popover-item.popover-processed {
+  transform: translateX(-50%);
+}
+
+/* The Top Header / Drag Handle Band */
+.message-popover-item::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0 28px; /* Stop the handle 28px before the end to clear the close button */
+  height: 14px;
+  background-color: rgba(0,0,0,0.05);
+  /* The grab cursor only appears here */
+  cursor: grab;
+  z-index: 5;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Visual feedback for active dragging on the titlebar */
+.message-popover-item:active::after {
+  cursor: grabbing;
+}
+
+/* Close Button: Positioned inside the 14px Header Strip */
+.popover-close {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  height: 14px;
+  width: 28px; /* Dedicated hit area width */
+  line-height: 12px; /* Optical centering for the × character */
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.popover-close:hover {
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Content Area with Symmetrical Padding */
+.message-content {
+  padding-inline: 4rem 1.5rem;
+  padding-block: 1.5rem 1.5rem;
+  display: block;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  overflow: auto;
+  flex-grow: 1;
+  white-space: normal;
+  word-wrap: break-word;
+  /* Standard text cursor for the content */
+  cursor: text;
+}
+
+/* Specifically target the text span for vertical breathing room */
+.popover-message-text {
+  display: inline-block;
+  margin-block-start: 0.5rem;
+  vertical-align: middle;
+}
+
+/* Suppress redundant icons injected by Backdrop Core or Devel */
+.message-content svg,
+.message-content .icon,
+.message-content [class*="icon-"] {
+  display: none !important;
+}
+
+/* Severity Sidebar background strip */
+.message-popover-item::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 14px;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  width: 3rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Sidebar Icon positioning */
+.message-popover-icon {
+  position: absolute;
+  inset-block-start: 2rem;
+  inset-inline-start: 0.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #fff;
+  z-index: 2;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  pointer-events: none;
+}
+
+/* Severity Colors and Icons */
+.message-popover-item.status::before { background-color: #d1e456; }
+.message-popover-item.status .message-popover-icon {
+  mask-image: url(../../../core/misc/icons/check-circle.svg);
+  -webkit-mask-image: url(../../../core/misc/icons/check-circle.svg);
+}
+
+.message-popover-item.warning::before { background-color: #f0c043; }
+.message-popover-item.warning .message-popover-icon {
+  mask-image: url(../../../core/misc/icons/exclamation-triangle.svg);
+  -webkit-mask-image: url(../../../core/misc/icons/exclamation-triangle.svg);
+}
+
+.message-popover-item.error::before { background-color: #e98b8b; }
+.message-popover-item.error .message-popover-icon {
+  mask-image: url(../../../core/misc/icons/exclamation-circle.svg);
+  -webkit-mask-image: url(../../../core/misc/icons/exclamation-circle.svg);
+}
+
+/* Scrollbar adjustment for inner content */
+.message-content::-webkit-scrollbar {
+  width: 8px;
+}
+.message-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.message-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.message-content::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}

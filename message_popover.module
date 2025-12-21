@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * @file
+ * Native Popover API integration for Backdrop system messages.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function message_popover_menu() {
+  $items['admin/config/user-interface/message-popover'] = [
+    'title' => 'Message Popover Settings',
+    'description' => 'Configure behavior for native popover system messages.',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => ['message_popover_settings_form'],
+    'access arguments' => ['administer site configuration'],
+    'type' => MENU_NORMAL_ITEM,
+  ];
+  return $items;
+}
+
+/**
+ * Settings form callback.
+ */
+function message_popover_settings_form($form, &$form_state) {
+  $config = config('message_popover.settings');
+  $form['#config'] = 'message_popover.settings';
+
+  $form['debug_mode'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Force Debug Mode'),
+    '#description' => t('If checked, all messages will use "manual" popovers.'),
+    '#default_value' => $config->get('debug_mode'),
+  ];
+
+  $form['persistence_limit'] = [
+    '#type' => 'number',
+    '#title' => t('Auto-Persistence Character Limit'),
+    '#description' => t('Messages longer than this will stay open automatically. Set to 0 to disable.'),
+    '#default_value' => $config->get('persistence_limit') ?: 300,
+  ];
+
+  $form['dismiss_timer'] = [
+    '#type' => 'number',
+    '#title' => t('Auto-Dismiss Timer (ms)'),
+    '#default_value' => $config->get('dismiss_timer') ?: 8000,
+  ];
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function message_popover_theme_registry_alter(&$theme_registry) {
+  if (isset($theme_registry['status_messages'])) {
+    $theme_registry['status_messages']['function'] = 'theme_message_popover_display';
+  }
+}
+
+/**
+ * Primary theme callback for system messages.
+ */
+function theme_message_popover_display($variables) {
+  $display = $variables['display'];
+  $all_messages = backdrop_get_messages($display);
+
+  if (empty($all_messages)) {
+    return '';
+  }
+
+  $config = config('message_popover.settings');
+  backdrop_add_js([
+    'messagePopover' => ['timer' => $config->get('dismiss_timer') ?: 8000]
+  ], 'setting');
+
+  $path = backdrop_get_path('module', 'message_popover');
+  backdrop_add_css($path . '/css/message_popover.css');
+  backdrop_add_js($path . '/js/message_popover.js');
+
+  $rendered_items = '';
+
+  foreach ($all_messages as $type => $messages) {
+    foreach ($messages as $index => $message) {
+
+      $plain_text = trim(strip_tags($message));
+
+      // FILTER: Corrected syntax to skip Devel "..." ghost messages.
+      if ($plain_text === '...' || empty($plain_text)) {
+        // If it's an ellipsis but lacks a Krumo table or div, it's noise.
+        if (!str_contains($message, '<table') && !str_contains($message, '<div')) {
+           continue;
+        }
+      }
+
+      // Detection for persistence behavior.
+      $is_long = ($config->get('persistence_limit') > 0 && strlen($plain_text) > $config->get('persistence_limit'));
+      $is_krumo = str_contains($message, 'krumo');
+      $is_devel = str_contains($message, '<pre') || str_contains($message, '<table');
+
+      $behavior = ($config->get('debug_mode') || $type === 'error' || $is_long || $is_krumo || $is_devel) ? 'manual' : 'auto';
+
+      $id = backdrop_html_id('msg-' . $type . '-' . $index);
+      $attributes = [
+        'id' => $id,
+        'popover' => $behavior,
+        'data-auto-dismiss' => ($behavior === 'auto') ? 'true' : 'false',
+        'class' => ['messages', $type, 'message-popover-item'],
+      ];
+
+      $rendered_items .= '<div ' . backdrop_attributes($attributes) . '>';
+      $rendered_items .= '  <div class="message-popover-icon"></div>';
+      // Span allows specific vertical alignment via CSS.
+      $rendered_items .= '  <div class="message-content"><span class="popover-message-text">' . $message . '</span></div>';
+      $rendered_items .= '  <button class="popover-close" popovertarget="' . $id . '" popovertargetaction="hide" aria-label="' . t('Close') . '">&times;</button>';
+      $rendered_items .= '</div>';
+    }
+  }
+
+  return $rendered_items;
+}
+
+/**
+ * Implements hook_preprocess_layout().
+ */
+function message_popover_preprocess_layout(&$variables) {
+  if (isset($_SERVER['HTTP_HX_REQUEST']) && $_SERVER['HTTP_HX_REQUEST'] === 'true') {
+    $messages = theme('status_messages');
+    if ($messages) {
+      $variables['content'] .= '<div id="messages-container-oob" hx-swap-oob="afterbegin">' . $messages . '</div>';
+    }
+  }
+}
+
+/**
+ * Implements hook_page_bottom().
+ */
+function message_popover_page_bottom(&$page_bottom) {
+  $page_bottom['message_popover_container'] = [
+    '#markup' => '<div id="messages-container-oob" style="display:none;"></div>',
+  ];
+}
