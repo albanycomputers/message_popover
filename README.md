@@ -47,7 +47,6 @@ Bugs and Feature requests should be reported in the Issue Queue: https://github.
 
 ## Credits:
 - Steve Moorhouse - Zulip (DrAlbany)
-- Inspiration used from TakePayments original Drupal module.
 - Google Gemini 3.0 Flash (Paid Tier) acting as a Senior Co-Developer and Security Advisor.
 
 ## Sponsorship:
