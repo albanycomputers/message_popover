@@ -50,12 +50,18 @@
       const rect = el.getBoundingClientRect();
       const relativeY = e.clientY - rect.top;
 
+      // Top 14px header strip
       if (relativeY <= 14) {
         isDragging = true;
-        // Visual feedback for dragging
         el.style.cursor = 'grabbing';
-        el.style.width = el.offsetWidth + 'px';
+
+        // Anti-jerk: Switch from transform-based centering to absolute pixels
+        el.style.insetInlineStart = rect.left + 'px';
+        el.style.insetBlockStart = rect.top + 'px';
         el.style.transform = 'none';
+        el.style.margin = '0';
+        el.style.width = rect.width + 'px'; // Lock width during drag
+
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
         e.preventDefault();
@@ -66,13 +72,11 @@
       if (!isDragging) return;
       el.style.insetInlineStart = (e.clientX - offsetX) + 'px';
       el.style.insetBlockStart = (e.clientY - offsetY) + 'px';
-      el.style.insetInlineEnd = 'auto';
     });
 
     document.addEventListener('mouseup', () => {
       if (isDragging) {
         isDragging = false;
-        // Reset to default cursor handled by CSS
         el.style.cursor = '';
       }
     });

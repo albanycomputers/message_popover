@@ -5,6 +5,42 @@
  * Native Popover API integration for Backdrop system messages.
  */
 
+/** Compatibility layer for PHP 7.1 - 7.4
+ * Backdrop CMS requires PHP 7.1 or higher, but some functions used in this
+ * module were only introduced in PHP 8.0. This layer provides polyfills for
+ * those functions to ensure compatibility with PHP 7.1 - 7.4.
+ * @see https://www.php.net/manual/en/migration80.new-features.php
+ * @todo Remove this compatibility layer when Backdrop CMS requires PHP 8.0 or higher.
+ */
+
+/**
+ * Polyfill for PHP 8.0 functions to maintain compatibility with PHP 7.1+.
+ */
+if (!function_exists('str_contains')) {
+  function str_contains($haystack, $needle) {
+    return $needle !== '' && mb_strpos($haystack, $needle) !== FALSE;
+  }
+}
+
+if (!function_exists('str_starts_with')) {
+  function str_starts_with($haystack, $needle) {
+    return (string) $needle !== '' && mb_strpos($haystack, $needle) === 0;
+  }
+}
+
+/** End of compatibility layer for PHP 7.1 - 7.4 */
+
+/**
+ * Implements hook_config_info().
+ */
+function message_popover_config_info() {
+  $prefixes['message_popover.settings'] = [
+    'label' => t('Message Popover settings'),
+    'group' => t('Configuration'),
+  ];
+  return $prefixes;
+}
+
 /**
  * Implements hook_menu().
  */
@@ -86,15 +122,13 @@ function theme_message_popover_display($variables) {
 
       $plain_text = trim(strip_tags($message));
 
-      // FILTER: Corrected syntax to skip Devel "..." ghost messages.
+      // Skip Devel "..." ghost messages.
       if ($plain_text === '...' || empty($plain_text)) {
-        // If it's an ellipsis but lacks a Krumo table or div, it's noise.
         if (!str_contains($message, '<table') && !str_contains($message, '<div')) {
            continue;
         }
       }
 
-      // Detection for persistence behavior.
       $is_long = ($config->get('persistence_limit') > 0 && strlen($plain_text) > $config->get('persistence_limit'));
       $is_krumo = str_contains($message, 'krumo');
       $is_devel = str_contains($message, '<pre') || str_contains($message, '<table');
@@ -111,7 +145,6 @@ function theme_message_popover_display($variables) {
 
       $rendered_items .= '<div ' . backdrop_attributes($attributes) . '>';
       $rendered_items .= '  <div class="message-popover-icon"></div>';
-      // Span allows specific vertical alignment via CSS.
       $rendered_items .= '  <div class="message-content"><span class="popover-message-text">' . $message . '</span></div>';
       $rendered_items .= '  <button class="popover-close" popovertarget="' . $id . '" popovertargetaction="hide" aria-label="' . t('Close') . '">&times;</button>';
       $rendered_items .= '</div>';
@@ -119,25 +152,4 @@ function theme_message_popover_display($variables) {
   }
 
   return $rendered_items;
-}
-
-/**
- * Implements hook_preprocess_layout().
- */
-function message_popover_preprocess_layout(&$variables) {
-  if (isset($_SERVER['HTTP_HX_REQUEST']) && $_SERVER['HTTP_HX_REQUEST'] === 'true') {
-    $messages = theme('status_messages');
-    if ($messages) {
-      $variables['content'] .= '<div id="messages-container-oob" hx-swap-oob="afterbegin">' . $messages . '</div>';
-    }
-  }
-}
-
-/**
- * Implements hook_page_bottom().
- */
-function message_popover_page_bottom(&$page_bottom) {
-  $page_bottom['message_popover_container'] = [
-    '#markup' => '<div id="messages-container-oob" style="display:none;"></div>',
-  ];
 }

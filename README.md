@@ -11,14 +11,13 @@ Message Popover replaces the standard Backdrop CMS static message area with inte
 - **Configurable Debug Mode**: A global toggle to force all messages into "manual" mode, preventing them from closing until explicitly dismissed.
 - **Smart Character Limit Persistence**: Automatically detects messages exceeding a defined character limit and keeps them open.
 - **Adjustable Auto-Dismiss Time**: Full control over how long standard status messages remain visible.
-- **HTMX Ready**: Supports Out-of-Band (OOB) message swaps for dynamic applications.
 
 ## Initial version
 This is a beta release for code review and testing.
 
 ### Requirements:
 - Backdrop CMS 1.x
-- PHP 8.0+
+- PHP 7.1+ (While the code functions with PHP 7.1 at this time through a compatibility layer, we strongly suggest using PHP 8.0+. We will not address issues related specifically to older, end-of-life PHP versions.)
 
 ## Installation:
 Install this module using the official Backdrop CMS instructions at https://docs.backdropcms.org/documentation/extend-with-modules
@@ -26,7 +25,7 @@ Install this module using the official Backdrop CMS instructions at https://docs
 Enable the module.
 
 ## Documentation:
-**Visit the admin page at** Administration > Configuration > User Interface > Message Popover (admin/config/user-interface/message-popover).
+**Visit the admin page at** Administration > Configuration > User Interface > Message Popover (admin/config/user-interface/message-popover)
 
 Set options for:
 - **Debug Mode**: Force all messages to remain open until manually closed.
