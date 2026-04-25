@@ -137,20 +137,20 @@
 /* Severity Colors and Icons */
 .message-popover-item.status::before { background-color: #d1e456; }
 .message-popover-item.status .message-popover-icon {
-  mask-image: url(../../../core/misc/icons/check-circle.svg);
-  -webkit-mask-image: url(../../../core/misc/icons/check-circle.svg);
+  mask-image: url(/core/misc/icons/check-circle.svg);
+  -webkit-mask-image: url(/core/misc/icons/check-circle.svg);
 }
 
 .message-popover-item.warning::before { background-color: #f0c043; }
 .message-popover-item.warning .message-popover-icon {
-  mask-image: url(../../../core/misc/icons/exclamation-triangle.svg);
-  -webkit-mask-image: url(../../../core/misc/icons/exclamation-triangle.svg);
+  mask-image: url(/core/misc/icons/exclamation-triangle.svg);
+  -webkit-mask-image: url(/core/misc/icons/exclamation-triangle.svg);
 }
 
 .message-popover-item.error::before { background-color: #e98b8b; }
 .message-popover-item.error .message-popover-icon {
-  mask-image: url(../../../core/misc/icons/exclamation-circle.svg);
-  -webkit-mask-image: url(../../../core/misc/icons/exclamation-circle.svg);
+  mask-image: url(/core/misc/icons/exclamation-circle.svg);
+  -webkit-mask-image: url(/core/misc/icons/exclamation-circle.svg);
 }
 
 /* Scrollbar adjustment for inner content */
