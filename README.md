@@ -12,9 +12,6 @@ Message Popover replaces the standard Backdrop CMS static message area with inte
 - **Smart Character Limit Persistence**: Automatically detects messages exceeding a defined character limit and keeps them open.
 - **Adjustable Auto-Dismiss Time**: Full control over how long standard status messages remain visible.
 
-## Initial version
-This is a beta release for code review and testing.
-
 ### Requirements:
 - Backdrop CMS 1.x
 - PHP 7.1+ (While the code functions with PHP 7.1 at this time through a compatibility layer, we strongly suggest using PHP 8.0+. We will not address issues related specifically to older, end-of-life PHP versions.)

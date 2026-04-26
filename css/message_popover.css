@@ -23,11 +23,10 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   z-index: 2147483647;
   background-color: #fff;
-  /* Explicitly set default cursor for the window body */
   cursor: default;
 }
 
-/* Maintain horizontal centering during the initial processed state */
+/* Maintain horizontal centering during initial processed state */
 .message-popover-item.popover-processed {
   transform: translateX(-50%);
 }
@@ -37,28 +36,26 @@
   content: "";
   position: absolute;
   inset-block-start: 0;
-  inset-inline: 0 28px; /* Stop the handle 28px before the end to clear the close button */
+  inset-inline: 0 28px;
   height: 14px;
   background-color: rgba(0,0,0,0.05);
-  /* The grab cursor only appears here */
   cursor: grab;
   z-index: 5;
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-/* Visual feedback for active dragging on the titlebar */
 .message-popover-item:active::after {
   cursor: grabbing;
 }
 
-/* Close Button: Positioned inside the 14px Header Strip */
+/* Close Button */
 .popover-close {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
   height: 14px;
-  width: 28px; /* Dedicated hit area width */
-  line-height: 12px; /* Optical centering for the × character */
+  width: 28px;
+  line-height: 12px;
   background: transparent;
   border: none;
   padding: 0;
@@ -77,7 +74,7 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Content Area with Symmetrical Padding */
+/* Content Area */
 .message-content {
   padding-inline: 4rem 1.5rem;
   padding-block: 1.5rem 1.5rem;
@@ -88,18 +85,16 @@
   flex-grow: 1;
   white-space: normal;
   word-wrap: break-word;
-  /* Standard text cursor for the content */
   cursor: text;
 }
 
-/* Specifically target the text span for vertical breathing room */
 .popover-message-text {
   display: inline-block;
   margin-block-start: 0.5rem;
   vertical-align: middle;
 }
 
-/* Suppress redundant icons injected by Backdrop Core or Devel */
+/* Suppress redundant icons */
 .message-content svg,
 .message-content .icon,
 .message-content [class*="icon-"] {
@@ -118,42 +113,27 @@
   pointer-events: none;
 }
 
-/* Sidebar Icon positioning */
+/* Sidebar Icon positioning - Minimalist Version */
 .message-popover-icon {
   position: absolute;
   inset-block-start: 2rem;
   inset-inline-start: 0.75rem;
   width: 1.5rem;
   height: 1.5rem;
-  background-color: #fff;
-  z-index: 2;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
+  /* We keep these to ensure the icon doesn't tile or stretch */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   pointer-events: none;
+  z-index: 2;
 }
 
-/* Severity Colors and Icons */
-.message-popover-item.status::before { background-color: #d1e456; }
-.message-popover-item.status .message-popover-icon {
-  mask-image: url(../../../core/misc/icons/check-circle.svg);
-  -webkit-mask-image: url(../../../core/misc/icons/check-circle.svg);
-}
-
+/* Severity Colors */
+.message-popover-item.status::before  { background-color: #d1e456; }
 .message-popover-item.warning::before { background-color: #f0c043; }
-.message-popover-item.warning .message-popover-icon {
-  mask-image: url(../../../core/misc/icons/exclamation-triangle.svg);
-  -webkit-mask-image: url(../../../core/misc/icons/exclamation-triangle.svg);
-}
+.message-popover-item.error::before   { background-color: #e98b8b; }
 
-.message-popover-item.error::before { background-color: #e98b8b; }
-.message-popover-item.error .message-popover-icon {
-  mask-image: url(../../../core/misc/icons/exclamation-circle.svg);
-  -webkit-mask-image: url(../../../core/misc/icons/exclamation-circle.svg);
-}
-
-/* Scrollbar adjustment for inner content */
+/* Scrollbar adjustment */
 .message-content::-webkit-scrollbar {
   width: 8px;
 }

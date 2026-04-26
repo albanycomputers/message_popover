@@ -1,13 +1,25 @@
-(function() {
+(function ($) {
   'use strict';
 
   Backdrop.behaviors.messagePopover = {
-    attach: function(context, settings) {
-      const messages = context.querySelectorAll('[popover].message-popover-item:not(.popover-processed)');
+    attach: function (context, settings) {
+      // Safely wrap context in jQuery to avoid "querySelectorAll is not a function"
+      const $messages = $(context).find('.message-popover-item').not('.popover-processed');
+
+      if (!$messages.length) {
+        return;
+      }
+
       const dismissTime = (settings.messagePopover && settings.messagePopover.timer) || 8000;
 
-      messages.forEach((el) => {
-        el.classList.add('popover-processed');
+      $messages.each(function () {
+        const el = this;
+        $(el).addClass('popover-processed');
+
+        // Defensive check: Ensure Popover API exists and element is still in DOM
+        if (typeof el.showPopover !== 'function' || !document.body.contains(el)) {
+          return;
+        }
 
         el.addEventListener('beforetoggle', (event) => {
           if (event.newState === 'open') {
@@ -32,10 +44,14 @@
           el.showPopover();
           if (el.getAttribute('data-auto-dismiss') === 'true') {
             setTimeout(() => {
-              if (document.body.contains(el) && el.matches(':popover-open')) el.hidePopover();
+              if (document.body.contains(el) && el.matches(':popover-open')) {
+                el.hidePopover();
+              }
             }, dismissTime);
           }
-        } catch (e) {}
+        } catch (e) {
+          console.warn('Message Popover could not be displayed:', e);
+        }
       });
     }
   };
@@ -50,17 +66,15 @@
       const rect = el.getBoundingClientRect();
       const relativeY = e.clientY - rect.top;
 
-      // Top 14px header strip
       if (relativeY <= 14) {
         isDragging = true;
         el.style.cursor = 'grabbing';
 
-        // Anti-jerk: Switch from transform-based centering to absolute pixels
         el.style.insetInlineStart = rect.left + 'px';
         el.style.insetBlockStart = rect.top + 'px';
         el.style.transform = 'none';
         el.style.margin = '0';
-        el.style.width = rect.width + 'px'; // Lock width during drag
+        el.style.width = rect.width + 'px';
 
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
@@ -81,4 +95,4 @@
       }
     });
   }
-})();
+})(jQuery);
