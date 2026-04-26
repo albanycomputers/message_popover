@@ -5,3 +5,4 @@ type = module
 package = User Interface
 php = 7.1
 configure = admin/config/user-interface/message-popover
+
