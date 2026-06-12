@@ -14,3 +14,6 @@ Thumbs.db
 # Ignore local PHP error logs
 error_log
 php_errors.log
+
+# Ignore Claude Code project instructions (local dev only, not shipped)
+CLAUDE.md

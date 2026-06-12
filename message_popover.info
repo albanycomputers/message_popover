@@ -3,6 +3,5 @@ description = "Upgrades system messages to use the native HTML Popover API. Feat
 backdrop = 1.x
 type = module
 package = User Interface
-php = 7.1
+php = 8.0
 configure = admin/config/user-interface/message-popover
-

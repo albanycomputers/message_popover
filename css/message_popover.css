@@ -1,9 +1,14 @@
 /**
  * message_popover.css
+ * Standardised for Backdrop CMS 1.x / 2.x.
  */
 
-/* Main Container */
-.message-popover-item:popover-open {
+/* Main Container.
+   :is() is required (not a plain comma list): browsers without the Popover API
+   don't recognise :popover-open and would drop the whole rule, but :is() is
+   forgiving — the .popover-fallback branch still applies, which is exactly the
+   no-Popover-API fallback path. */
+:is(.message-popover-item:popover-open, .message-popover-item.popover-fallback) {
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -23,10 +28,11 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   z-index: 2147483647;
   background-color: #fff;
+  /* Explicitly set default cursor for the window body */
   cursor: default;
 }
 
-/* Maintain horizontal centering during initial processed state */
+/* Maintain horizontal centering during the initial processed state */
 .message-popover-item.popover-processed {
   transform: translateX(-50%);
 }
@@ -36,26 +42,28 @@
   content: "";
   position: absolute;
   inset-block-start: 0;
-  inset-inline: 0 28px;
+  inset-inline: 0 28px; /* Stop the handle 28px before the end to clear the close button */
   height: 14px;
   background-color: rgba(0,0,0,0.05);
+  /* The grab cursor only appears here */
   cursor: grab;
   z-index: 5;
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
+/* Visual feedback for active dragging on the titlebar */
 .message-popover-item:active::after {
   cursor: grabbing;
 }
 
-/* Close Button */
+/* Close Button: Positioned inside the 14px Header Strip */
 .popover-close {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
   height: 14px;
-  width: 28px;
-  line-height: 12px;
+  width: 28px; /* Dedicated hit area width */
+  line-height: 12px; /* Optical centering for the × character */
   background: transparent;
   border: none;
   padding: 0;
@@ -74,7 +82,7 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Content Area */
+/* Content Area with Symmetrical Padding */
 .message-content {
   padding-inline: 4rem 1.5rem;
   padding-block: 1.5rem 1.5rem;
@@ -85,16 +93,18 @@
   flex-grow: 1;
   white-space: normal;
   word-wrap: break-word;
+  /* Standard text cursor for the content */
   cursor: text;
 }
 
+/* Specifically target the text span for vertical breathing room */
 .popover-message-text {
   display: inline-block;
   margin-block-start: 0.5rem;
   vertical-align: middle;
 }
 
-/* Suppress redundant icons */
+/* Suppress redundant icons injected by Backdrop Core or Devel */
 .message-content svg,
 .message-content .icon,
 .message-content [class*="icon-"] {
@@ -113,27 +123,45 @@
   pointer-events: none;
 }
 
-/* Sidebar Icon positioning - Minimalist Version */
+/* Sidebar Icon positioning */
 .message-popover-icon {
   position: absolute;
   inset-block-start: 2rem;
   inset-inline-start: 0.75rem;
   width: 1.5rem;
   height: 1.5rem;
-  /* We keep these to ensure the icon doesn't tile or stretch */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  pointer-events: none;
+  background-color: #fff;
   z-index: 2;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  pointer-events: none;
 }
 
-/* Severity Colors */
-.message-popover-item.status::before  { background-color: #d1e456; }
-.message-popover-item.warning::before { background-color: #f0c043; }
-.message-popover-item.error::before   { background-color: #e98b8b; }
+/* Severity Colours and Icons.
+   Icon URLs come from custom properties injected inline by PHP using
+   base_path(), so they resolve correctly at any module location AND on
+   subdirectory installs. See theme_message_popover_display(). */
+.message-popover-item.status::before { background-color: #d1e456; }
+.message-popover-item.status .message-popover-icon {
+  mask-image: var(--message-popover-icon-status);
+  -webkit-mask-image: var(--message-popover-icon-status);
+}
 
-/* Scrollbar adjustment */
+.message-popover-item.warning::before { background-color: #f0c043; }
+.message-popover-item.warning .message-popover-icon {
+  mask-image: var(--message-popover-icon-warning);
+  -webkit-mask-image: var(--message-popover-icon-warning);
+}
+
+.message-popover-item.error::before { background-color: #e98b8b; }
+.message-popover-item.error .message-popover-icon {
+  mask-image: var(--message-popover-icon-error);
+  -webkit-mask-image: var(--message-popover-icon-error);
+}
+
+/* Scrollbar adjustment for inner content */
 .message-content::-webkit-scrollbar {
   width: 8px;
 }
